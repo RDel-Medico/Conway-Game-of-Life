@@ -84,11 +84,11 @@ class Cursor {
   Cursor (int posX, int posY, int largeur, int min, int max) {
     this.posX = posX;
     this.posY = posY;
-    this.valuePourcent = 0.5;
+    this.valuePourcent = 0;
     this.largeur = largeur;
     this.valueMin = min;
     this.valueMax = max;
-    this.value = (int)(( max - min ) * valuePourcent); 
+    this.value = valueMin + (int)(( max - min ) * valuePourcent);
   }
   
   void updateValue() {

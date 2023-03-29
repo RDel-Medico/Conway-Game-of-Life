@@ -5,6 +5,8 @@ Menu home;
 Menu simulation;
 Menu  option;
 
+Game game;
+
 /*
  app.app[0] = Home
  app.app[1] = Simulation
@@ -18,11 +20,13 @@ Button b;
 void setup() {
   size(900, 900);
   
-  
   app = new Application(initMenuHome());
   app.addMenu(initMenuSimulation());
   app.addMenu(initMenuOption());
   app.addMenu(initMenuCredit());
+  
+  println("Width : " + app.app[2].cursors[0].value + "Height : " + app.app[2].cursors[1].value);
+  game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value);
   
   PFont myFont = createFont(PFont.list()[158], 32);
   
@@ -32,7 +36,13 @@ void setup() {
 
 
 void draw() {
-  backgroundPage();
+  if (app.currentMenu != app.app[1]) {
+    backgroundPage();
+  } else {
+    background(255);
+    game.display();
+  }
+  
   app.display();
   
   if (app.currentMenu == app.app[2]) {
@@ -69,6 +79,7 @@ void mouseReleased() {
   } else if (app.currentMenu == app.app[2]) { // Manage buttons of Settings
     if (app.release() == 0) { // Button back
       app.changeMenu(0);
+      game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value);
     }
   } else if (app.currentMenu == app.app[3]) { // Manage buttons of Credit
     if (app.release() == 0) { // Button back
@@ -150,13 +161,13 @@ Menu initMenuOption() {
   t = new Text("Color of Cell", width/2, 430, 50, black);
   option.addText(t);
   
-  t = new Text("Green", width/2 - 200, 505, 30, black);
+  t = new Text("Red", width/2 - 200, 505, 30, black);
   option.addText(t);
   
-  t = new Text("Blue", width/2 - 200, 600, 30, black);
+  t = new Text("Green", width/2 - 200, 600, 30, black);
   option.addText(t);
   
-  t = new Text("Red", width/2 - 200, 715, 30, black);
+  t = new Text("Blue", width/2 - 200, 715, 30, black);
   option.addText(t);
   
   c = new Cursor(width/2 + 50, 500, 400, 0, 255);
