@@ -32,13 +32,17 @@ class Game {
       neighbors = this.getNeighbors(c);
       
       if (nbAlive(neighbors) == 2 || nbAlive(neighbors) == 3) {
-        newCellAlive = (Cell[])append(newCellAlive, c);
+        if (!contain(newCellAlive, c)) {
+          newCellAlive = (Cell[])append(newCellAlive, c);
+        }
       }
       
       for (Cell cell : neighbors) {
         if (cell != null) {
           if (nbAlive(this.getNeighbors(cell)) == 3) {
-            newCellAlive = (Cell[])append(newCellAlive, cell);
+            if (!contain(newCellAlive, cell)) {
+              newCellAlive = (Cell[])append(newCellAlive, cell);
+            }
           }
         }
       }
@@ -65,6 +69,15 @@ class Game {
     println("---------------------------");
     printArray(cellAlive);
     
+  }
+  
+  boolean contain(Cell [] cells, Cell c) {
+    for (Cell cell : cells) {
+      if (c == cell) {
+        return true; 
+      }
+    }
+    return false;
   }
   
   int nbAlive(Cell[] cell){
