@@ -4,30 +4,54 @@ class Game {
   int nbCellLargeur;
   int nbCellHauteur;
   
-  Game (int nbCellLargeur, int nbCellHauteur) {
+  boolean running;
+  
+  Game (int nbCellLargeur, int nbCellHauteur, Color col) {
     this.nbCellLargeur = nbCellLargeur;
     this.nbCellHauteur = nbCellHauteur;
     allCell = new Cell[0];
-    for (int i = 0; i < nbCellLargeur; i++) {
-      for (int j = 0; j < nbCellHauteur; j++) {
-        println("i : " + i + "j : " + j);
-        allCell = (Cell[]) append(allCell, new Cell(i * 30, i*30, 30, 30));
+    cellAlive = new Cell[0];
+    this.running = false;
+    float sizeX = width / this.nbCellLargeur;
+        float sizeY = width / this.nbCellLargeur;
+        
+        
+    for (int i = 0; i < nbCellHauteur; i++) {
+      for (int j = 0; j < nbCellLargeur; j++) {
+        allCell = (Cell[]) append(allCell, new Cell(i * sizeX, j*sizeY, sizeX, sizeY, col));
       }
     }
   }
   
+  void click() {
+    float size = width / this.nbCellLargeur;
+    int caseX = (int)((mouseX - (mouseX % size)) / size);
+    
+    
+    
+    size = height / this.nbCellHauteur;
+    int caseY = (int)((mouseY - (mouseY % size)) / size);
+    
+    allCell[this.nbCellLargeur * caseX + caseY].alive = true;
+    cellAlive = (Cell[]) append(cellAlive, allCell[this.nbCellLargeur * caseX  + caseY]);
+  }
+  
   void display() {
     background(255);
-    for (int i = 0; i < this.nbCellLargeur; i++) {
-      line(i * 30, 0, i * 30, height);
+    stroke(0);
+    strokeWeight(2);
+    float size = width / this.nbCellLargeur;
+    for (int i = 1; i < this.nbCellLargeur; i++) {
+      line(size * i, 0, size * i, height);
     }
     
-    for (int i = 0; i < this.nbCellLargeur; i++) {
-      line(0, i*30, width, i*30);
+    size = height / this.nbCellHauteur;
+    for (int i = 1; i < this.nbCellHauteur; i++) {
+      line(0, size * i, width, size * i);
     }
     
-    /*for (Cell c : cellAlive) {
+    for (Cell c : cellAlive) {
       c.display();
-    }*/
+    }
   }
 }

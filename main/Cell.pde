@@ -1,19 +1,20 @@
 class Cell {
-  int posX;
-  int posY;
-  int largeur;
-  int longeur;
+  float posX;
+  float posY;
+  float largeur;
+  float longeur;
   
   boolean alive;
   
   Color col;
   
-  Cell (int x, int y, int largeur, int longeur) {
+  Cell (float x, float y, float largeur, float longeur, Color col) {
     this.posX = x;
     this.posY = y;
     this.largeur = largeur;
     this.longeur = longeur;
     this.alive = false;
+    this.col = col;
   }
   
   void display() {
@@ -23,6 +24,6 @@ class Cell {
     } else {
       fill(255);
     }
-    rect(posX, posY, largeur*10, longeur*10);
+    rect(posX+1, posY+1, largeur-2, longeur-2);
   }
 }

@@ -26,7 +26,7 @@ void setup() {
   app.addMenu(initMenuCredit());
   
   println("Width : " + app.app[2].cursors[0].value + "Height : " + app.app[2].cursors[1].value);
-  game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value);
+  game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value, new Color(app.app[2].cursors[1].value, app.app[2].cursors[3].value, app.app[2].cursors[4].value));
   
   PFont myFont = createFont(PFont.list()[158], 32);
   
@@ -50,6 +50,12 @@ void draw() {
     strokeWeight(2);
     fill(app.currentMenu.cursors[2].value, app.currentMenu.cursors[3].value, app.currentMenu.cursors[4].value);
     rect(30, 480, 160, 250);
+  }
+}
+
+void mouseClicked() {
+  if (app.currentMenu == app.app[1]) {
+    game.click();
   }
 }
 
@@ -79,7 +85,7 @@ void mouseReleased() {
   } else if (app.currentMenu == app.app[2]) { // Manage buttons of Settings
     if (app.release() == 0) { // Button back
       app.changeMenu(0);
-      game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value);
+      game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value, new Color(app.app[2].cursors[2].value, app.app[2].cursors[3].value, app.app[2].cursors[4].value));
     }
   } else if (app.currentMenu == app.app[3]) { // Manage buttons of Credit
     if (app.release() == 0) { // Button back
