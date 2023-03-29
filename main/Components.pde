@@ -23,14 +23,16 @@ class Button {
   int hauteur;
   Color col;
   boolean clicked;
+  String text;
   
-  Button(int x, int y, int largeur, int hauteur, Color col) {
-    this.posX = x;
-    this.posY = y;
+  Button(int x, int y, int largeur, int hauteur, Color col, String text) {
+    this.posX = x - largeur / 2;
+    this.posY = y - hauteur / 2;
     this.largeur = largeur;
     this.hauteur = hauteur;
     this.col = col;
     this.clicked = false;
+    this.text = text;
   }
   
   boolean mouseHover () {
@@ -50,18 +52,84 @@ class Button {
   
   void display() {
     if (this.clicked) {
-      stroke(255);
+      stroke(100);
       strokeWeight(5);
     } else{
-      noStroke();
+      stroke(0);
+      strokeWeight(5);
     }
-    
     if (this.mouseHover()){
       fill(this.col.red - 50, this.col.green - 50, this.col.blue - 50);
     } else {
       fill(this.col.red, this.col.green, this.col.blue);
     }
     rect(posX, posY, largeur, hauteur);
+    
+    textSize(50);
+    textAlign(CENTER);
+    fill(0);
+    text(this.text, this.posX + largeur / 2, this.posY + this.hauteur / 2 + 15);
+  }
+}
+
+class Cursor {
+  float valuePourcent;
+  int posX;
+  int posY;
+  int largeur;
+  int valueMin;
+  int valueMax;
+  int value;
+  
+  Cursor (int posX, int posY, int largeur, int min, int max) {
+    this.posX = posX;
+    this.posY = posY;
+    this.valuePourcent = 0.5;
+    this.largeur = largeur;
+    this.valueMin = min;
+    this.valueMax = max;
+    this.value = (int)(( max - min ) * valuePourcent); 
+  }
+  
+  void updateValue() {
+    this.value = this.valueMin + (int)(( this.valueMax - this.valueMin ) * valuePourcent); 
+  }
+  
+  void displayBar() {
+    fill(150);
+    stroke(100);
+    strokeWeight(2);
+    rect(posX - largeur / 2, posY - 5, largeur, 10);
+  }
+  
+  void displaySelector() {
+    fill(lightBlue.red, lightBlue.green, lightBlue.blue);
+    stroke(0);
+    strokeWeight(2);
+    circle((posX - largeur / 2) + largeur * valuePourcent, posY, 30);
+  }
+  
+  void displayValue() {
+    fill(lightBlue.red, lightBlue.green, lightBlue.blue);
+    strokeWeight(2);
+    stroke(0);
+    rect(posX - largeur / 2 + largeur + 20, posY - 20, 75, 40);
+    fill(0);
+    textSize(30);
+    text(this.value, posX - largeur / 2 + largeur + 20 + 37, posY + 10);
+  }
+  
+  boolean selectorClicked() {
+    int x = (int)((posX - largeur / 2) + largeur * valuePourcent);
+    int y = posY;
+    return sqrt(pow(max(mouseX, x) - min(mouseX, x), 2) + pow(max(mouseY, y) - min(mouseY, y), 2)) < 30;
+  }
+  
+  void display() {
+    updateValue();
+    displayBar();
+    displaySelector();
+    displayValue();
   }
 }
 
@@ -83,6 +151,7 @@ class Text {
   void display() {
     textSize(this.fontWeight);
     fill(this.col.red, this.col.green, this.col.blue);
+    textAlign(CENTER);
     text(this.text, posX, posY);
   }
 }

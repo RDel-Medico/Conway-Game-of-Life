@@ -4,11 +4,12 @@ class Application {
   
   Application(Menu m) {
     this.app = new Menu[0];
+    this.addMenu(m);
     this.currentMenu = m;
   }
   
-  void changeMenu(Menu m) {
-    this.currentMenu = m;
+  void changeMenu(int m) {
+    this.currentMenu = this.app[m];
   }
   
   void addMenu(Menu m) {
@@ -21,6 +22,10 @@ class Application {
   
   void click() {
     this.currentMenu.click();
+  }
+  
+  void dragged() {
+    this.currentMenu.dragged();
   }
   
   int release() {
