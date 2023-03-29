@@ -4,17 +4,20 @@ class Cell {
   float largeur;
   float longeur;
   
+  int index;
+  
   boolean alive;
   
   Color col;
   
-  Cell (float x, float y, float largeur, float longeur, Color col) {
+  Cell (float x, float y, float largeur, float longeur, Color col, int index) {
     this.posX = x;
     this.posY = y;
     this.largeur = largeur;
     this.longeur = longeur;
     this.alive = false;
     this.col = col;
+    this.index = index;
   }
   
   void display() {

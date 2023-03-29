@@ -25,7 +25,6 @@ void setup() {
   app.addMenu(initMenuOption());
   app.addMenu(initMenuCredit());
   
-  println("Width : " + app.app[2].cursors[0].value + "Height : " + app.app[2].cursors[1].value);
   game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value, new Color(app.app[2].cursors[1].value, app.app[2].cursors[3].value, app.app[2].cursors[4].value));
   
   PFont myFont = createFont(PFont.list()[158], 32);
@@ -53,14 +52,15 @@ void draw() {
   }
 }
 
-void mouseClicked() {
-  if (app.currentMenu == app.app[1]) {
-    game.click();
-  }
-}
-
 void mousePressed() {
   app.click();
+  if (app.currentMenu == app.app[1]) {
+    if (app.release() == -1) { // If the click is not on a button
+      game.click();
+    } else if (app.release() == 1) { // Button Next step
+      game.nextStep();
+    }
+  }
 }
 
 void mouseDragged() {
@@ -88,6 +88,10 @@ void mouseReleased() {
       game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value, new Color(app.app[2].cursors[2].value, app.app[2].cursors[3].value, app.app[2].cursors[4].value));
     }
   } else if (app.currentMenu == app.app[3]) { // Manage buttons of Credit
+    if (app.release() == 0) { // Button back
+      app.changeMenu(0);
+    }
+  } else if (app.currentMenu == app.app[1]) { // Manage buttons of simulation
     if (app.release() == 0) { // Button back
       app.changeMenu(0);
     }
@@ -131,6 +135,12 @@ Menu initMenuSimulation() {
   Button b;
   Text t;
   Menu simulation = new Menu();
+  
+  b = new Button (105, height-50, 150, 50, lightBlue, "Back");
+  simulation.addButton(b);
+  
+  b = new Button (width/2, height-50, 250, 50, lightBlue, "Next step");
+  simulation.addButton(b);
   
   return simulation;
 }
