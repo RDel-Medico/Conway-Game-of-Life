@@ -34,6 +34,13 @@ void setup() {
 void draw() {
   backgroundPage();
   app.display();
+  
+  if (app.currentMenu == app.app[2]) {
+    stroke(0);
+    strokeWeight(2);
+    fill(app.currentMenu.cursors[2].value, app.currentMenu.cursors[3].value, app.currentMenu.cursors[4].value);
+    rect(30, 480, 160, 250);
+  }
 }
 
 void mousePressed() {
@@ -117,24 +124,54 @@ Menu initMenuOption() {
   Menu option = new Menu();
   Cursor c;
   
-  t = new Text("Settings", width/2, 200, 100, black);
+  t = new Text("Settings", width/2, 100, 100, black);
   option.addText(t);
   
-  t = new Text("Width of the map", width/2, 275, 30, black);
+  
+//------------------------------Map settings------------------------------------
+  t = new Text("Map settings", width/2, 200, 50, black);
   option.addText(t);
   
-  c = new Cursor(width/2, 300, 400, 10, 1000);
+  t = new Text("Width of the map", width/2 - 300, 265, 30, black);
+  option.addText(t);
+  
+  c = new Cursor(width/2 + 50, 260, 400, 10, 1000);
   option.addCursor(c);
   
-  t = new Text("Height of the map", width/2, 375, 30, black);
+  t = new Text("Height of the map", width/2 - 300, 360, 30, black);
   option.addText(t);
   
-  c = new Cursor(width/2, 400, 400, 10, 1000);
+  c = new Cursor(width/2 + 50, 355, 400, 10, 1000);
+  option.addCursor(c);
+//-----------------------------------------------------------------------------
+  
+  
+//------------------------------Color settings------------------------------------
+  t = new Text("Color of Cell", width/2, 430, 50, black);
+  option.addText(t);
+  
+  t = new Text("Green", width/2 - 200, 505, 30, black);
+  option.addText(t);
+  
+  t = new Text("Blue", width/2 - 200, 600, 30, black);
+  option.addText(t);
+  
+  t = new Text("Red", width/2 - 200, 715, 30, black);
+  option.addText(t);
+  
+  c = new Cursor(width/2 + 50, 500, 400, 0, 255);
   option.addCursor(c);
   
-  b = new Button (width/2, 650, 400, 100, lightBlue, "Back");
+  c = new Cursor(width/2 + 50, 595, 400, 0, 255);
+  option.addCursor(c);
+  
+  c = new Cursor(width/2 + 50, 710, 400, 0, 255);
+  option.addCursor(c);
+//-----------------------------------------------------------------------------
+  
+    
+  b = new Button (width/2, 800, 400, 100, lightBlue, "Back");
   option.addButton(b);
-  
   
   return option;
 }
