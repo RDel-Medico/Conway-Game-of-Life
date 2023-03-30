@@ -30,10 +30,12 @@ class Game {
   
   void run (int currentFrame) {
     if (currentFrame < previousFrame) {
-      if (currentFrame + 60 - previousFrame == speed) {
+      if (currentFrame + 60 == previousFrame + speed) {
+        previousFrame = currentFrame;
         this.nextStep();
       }
-    } else if (currentFrame - previousFrame == speed) {
+    } else if (currentFrame == previousFrame + speed) {
+      previousFrame = currentFrame;
       this.nextStep();
     }
   }
@@ -78,6 +80,12 @@ class Game {
     for (Cell c : cellAlive) {
       allCell[c.index].alive = true;
     }
+  }
+  
+  void setSpeed() {
+    
+    this.speed = 59 / app.app[1].cursors[0].value;
+    println(speed);
   }
   
   boolean contain(Cell [] cells, Cell c) {

@@ -75,7 +75,12 @@ void mousePressed() {
 }
 
 void mouseDragged() {
-  app.dragged();
+  if (game.running == false && app.currentMenu == app.app[1]) {
+    app.dragged();
+    game.setSpeed();
+  } else if (app.currentMenu != app.app[1]) {
+    app.dragged();
+  }
 }
 
 void mouseReleased() {
