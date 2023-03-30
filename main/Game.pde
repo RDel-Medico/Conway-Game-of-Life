@@ -8,11 +8,8 @@ class Game {
   //dimension of the game
   int nbCellLargeur;
   int nbCellHauteur;
-  float sizeXCell;
-  float sizeYCell;
-  float originalSizeX;
-  float originalSizeY;
   int zoom;
+  int offset;
 
   //Parameters related to the auto simulation
   int speed; // speed is equals to the number of frame it take to do a step (max 59 is the slowest, min 1 is the fastest)
@@ -24,6 +21,7 @@ class Game {
     this.nbCellLargeur = nbCellLargeur;
     this.nbCellHauteur = nbCellHauteur;
     this.zoom = 0;
+    this.offset = 50;
 
     //initialisation of parameters related to the auto simulation
     this.speed = 59;
@@ -34,13 +32,10 @@ class Game {
     allCell = new Cell[0];
     cellAlive = new Cell[0];
 
-    sizeXCell = width / this.nbCellLargeur;
-    sizeYCell = width / this.nbCellLargeur;
-
     //initialisation of all cell (dead by default)
     for (int i = 0; i < nbCellHauteur; i++) {
       for (int j = 0; j < nbCellLargeur; j++) {
-        allCell = (Cell[]) append(allCell, new Cell(j * sizeXCell, i*sizeYCell, sizeXCell, sizeYCell, col, i*nbCellLargeur+j));
+        allCell = (Cell[]) append(allCell, new Cell(j * 90 + offset, i*90, 90, 90, col, i*nbCellLargeur+j));
       }
     }
   }
@@ -64,8 +59,8 @@ class Game {
   Increment the zoom
   */
   void incrementZomm () {
-    if (this.zoom < 20) {
-      this.zoom++; 
+    if (this.zoom < 50) {
+      this.zoom+=2;
     }
   }
   
@@ -74,13 +69,19 @@ class Game {
   */
   void decrementZomm () {
     if (this.zoom > 0) {
-      this.zoom--; 
+      this.zoom-=2;
     }
   }
   
   void updateZoom() {
-    this.sizeXCell = 30 - zoom;
-    this.sizeYCell = 30 - zoom;
+    for (int i = 0; i < nbCellHauteur; i++) {
+        for (int j = 0; j < nbCellLargeur; j++) {
+          allCell[i*nbCellLargeur+j].posX = j * (90-zoom) + offset;
+          allCell[i*nbCellLargeur+j].posY = i * (90-zoom);
+          allCell[i*nbCellLargeur+j].largeur = 90 - zoom;
+          allCell[i*nbCellLargeur+j].longeur = 90 - zoom;
+        }
+      }
   }
 
   /*
@@ -213,8 +214,8 @@ class Game {
 
   void click() {
     //Calculation of the cell clicked on
-    int caseX = (int)((mouseX - (mouseX % sizeXCell)) / sizeXCell);
-    int caseY = (int)((mouseY - (mouseY % sizeYCell)) / sizeYCell);
+    int caseX = (int)(((mouseX - offset) - ((mouseX - offset) % this.allCell[0].largeur)) / this.allCell[0].largeur);
+    int caseY = (int)(((mouseY - (mouseY % this.allCell[0].longeur))) / this.allCell[0].longeur);
     
     int index = this.nbCellLargeur * caseY + caseX;
 
@@ -251,11 +252,11 @@ class Game {
     strokeWeight(10);
     //Display the lines
     for (int i = 1; i < this.nbCellLargeur; i++) {
-      line(sizeXCell * i, 0, sizeXCell * i, height);
+      line(this.allCell[0].largeur * i + offset, 0, this.allCell[0].largeur * i + offset, height);
     }
 
     for (int i = 1; i < this.nbCellHauteur; i++) {
-      line(0, sizeYCell * i, width, sizeYCell * i);
+      line(0, this.allCell[0].longeur * i, width, this.allCell[0].longeur * i);
     }
 
     //display the cell alive

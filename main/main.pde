@@ -66,7 +66,7 @@ void draw() {
 
 void mouseWheel(MouseEvent event) {
   if (app.currentMenu == app.app[1]) {
-    if (event.getCount() == 1) { // scroll out
+    if (event.getCount() == -1) { // scroll out
       game.decrementZomm();
     } else { //  scroll in
       game.incrementZomm();
