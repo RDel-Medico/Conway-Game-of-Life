@@ -1,15 +1,20 @@
+
+/*
+This class represent a Cell of the game
+ */
 class Cell {
+  //Display variable
   float posX;
   float posY;
   float largeur;
   float longeur;
-  
-  int index;
-  
-  boolean alive;
-  
-  Color col;
-  
+
+  int index; // index of the cell on the current grid
+
+  boolean alive; // is the cell alive
+
+  Color col; // The color of the cell when she is alive
+
   Cell (float x, float y, float largeur, float longeur, Color col, int index) {
     this.posX = x;
     this.posY = y;
@@ -19,7 +24,10 @@ class Cell {
     this.col = col;
     this.index = index;
   }
-  
+
+  /*
+  Display the cell (colored if alive)
+   */
   void display() {
     noStroke();
     if (this.alive) {

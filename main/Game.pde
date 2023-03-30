@@ -1,203 +1,237 @@
+/*
+This class represente an instance of the game of life
+ */
 class Game {
-  Cell [] allCell;
-  Cell [] cellAlive;
+  Cell [] allCell; // Represent all the cell of the game
+  Cell [] cellAlive; // Represent all the celle alive of the game
+
+  //dimension of the game
   int nbCellLargeur;
   int nbCellHauteur;
-  
-  int speed;
+  float sizeXCell;
+  float sizeYCell;
+
+  //Parameters related to the auto simulation
+  int speed; // speed is equals to the number of frame it take to do a step (max 59 is the slowest, min 1 is the fastest)
   int previousFrame;
-  
-  boolean running;
-  
+  boolean running; // is the game running
+
   Game (int nbCellLargeur, int nbCellHauteur, Color col) {
+    //initialisation of dimension of the game
     this.nbCellLargeur = nbCellLargeur;
     this.nbCellHauteur = nbCellHauteur;
+
+    //initialisation of parameters related to the auto simulation
+    this.speed = 59;
+    this.previousFrame = 0;
+    this.running = false;
+
+    //No cell at first
     allCell = new Cell[0];
     cellAlive = new Cell[0];
-    this.running = false;
-    this.previousFrame = 0;
-    this.speed = 59;
-    float sizeX = width / this.nbCellLargeur;
-        float sizeY = width / this.nbCellLargeur;
-        
-        
+
+    sizeXCell = width / this.nbCellLargeur;
+    sizeYCell = width / this.nbCellLargeur;
+
+    //initialisation of all cell (dead by default)
     for (int i = 0; i < nbCellHauteur; i++) {
       for (int j = 0; j < nbCellLargeur; j++) {
-        allCell = (Cell[]) append(allCell, new Cell(j * sizeX, i*sizeY, sizeX, sizeY, col, i*nbCellLargeur+j));
+        allCell = (Cell[]) append(allCell, new Cell(j * sizeXCell, i*sizeYCell, sizeXCell, sizeYCell, col, i*nbCellLargeur+j));
       }
     }
   }
-  
+
+  /*
+  Function that manage the auto simulation (function need to be called each frame)
+   */
   void run (int currentFrame) {
-    if (currentFrame < previousFrame) {
-      if (currentFrame + 60 == previousFrame + speed) {
+    if (currentFrame < previousFrame) { // if the current frame looped (since it is modulo 60)
+      if (currentFrame + 60 == previousFrame + speed) { // We add 60
         previousFrame = currentFrame;
         this.nextStep();
       }
-    } else if (currentFrame == previousFrame + speed) {
+    } else if (currentFrame == previousFrame + speed) { // Otherwise we can directly compare
       previousFrame = currentFrame;
       this.nextStep();
     }
   }
-  
+
+  /*
+  Change the color of all alive cell
+   */
   void setColor (Color col) {
     for (Cell c : this.allCell) {
       c.col = col;
     }
   }
+
+  /*
+  Update all the cell alive and dead based on the two rule
   
+  Rule 1 : a living cell surounded by exactly 2 or 3 cell alive stay alive otherwise it dies
+  
+  Rule 2 : a dead cell become alive if she is surrounded by exactly 3 living cell
+  */
   void nextStep() {
+    Cell[] newCellAlive = new Cell[0]; //The new tab containing all cell alive
+
+    Cell []neighbors = new Cell[8]; // Contain the neighbors of a cell
     
-    Cell[] newCellAlive = new Cell[0];
-    
-    Cell []neighbors = new Cell[8];
-    for (Cell c : cellAlive) {
+    for (Cell c : cellAlive) { // We check all the living cell
       neighbors = this.getNeighbors(c);
-      
-      if (nbAlive(neighbors) == 2 || nbAlive(neighbors) == 3) {
+      int nbNeighborsAlive = nbAlive(neighbors);
+
+      if (nbNeighborsAlive == 2 || nbNeighborsAlive == 3) { // If the cell stay alive
         if (!contain(newCellAlive, c)) {
-          newCellAlive = (Cell[])append(newCellAlive, c);
+          newCellAlive = (Cell[])append(newCellAlive, c); // We add it to the new cellAlive tab otherwise we don't add it
         }
       }
-      
-      for (Cell cell : neighbors) {
-        if (cell != null) {
-          if (nbAlive(this.getNeighbors(cell)) == 3) {
+
+      for (Cell cell : neighbors) { // We check each dead neighbors (to see if one become alive)
+        if (cell != null && !cell.alive) { // If the neighbors is dead
+          if (nbAlive(this.getNeighbors(cell)) == 3) { // And has exactly 3 alive neighbors
             if (!contain(newCellAlive, cell)) {
-              newCellAlive = (Cell[])append(newCellAlive, cell);
+              newCellAlive = (Cell[])append(newCellAlive, cell); // We add the cell to the new cell Alive
             }
           }
         }
       }
     }
-    
-    for (Cell c : cellAlive) {
+
+    for (Cell c : cellAlive) { // All previous cellAlive are set dead
       allCell[c.index].alive = false;
     }
-    
-    this.cellAlive = newCellAlive;
-    
-    for (Cell c : cellAlive) {
+
+    this.cellAlive = newCellAlive; // We change the cell Alive
+
+    for (Cell c : cellAlive) { // All cell Alive become alive
       allCell[c.index].alive = true;
     }
   }
-  
-  void setSpeed() {
-    
-    this.speed = 59 / app.app[1].cursors[0].value;
-    println(speed);
+
+  //Set the speed
+  void setSpeed(int value) {
+    this.previousFrame = 0;
+    this.speed = 59 / value;
   }
-  
+
+  /*
+  Return true if the tab in parameters contain the cell c
+  */
   boolean contain(Cell [] cells, Cell c) {
     for (Cell cell : cells) {
       if (c == cell) {
-        return true; 
+        return true;
       }
     }
-    return false;
+    return false; // if no case matched
   }
-  
-  int nbAlive(Cell[] cell){
+
+  /*
+  return the number of cell alive in the tab in parameter
+  */
+  int nbAlive(Cell[] cell) {
     int nb = 0;
-    
-    for (Cell c : cell){
-      if (c != null){
-        if (c.alive){
-        nb++;
-      }
+    for (Cell c : cell) {
+      if (c != null && c.alive) { // If the cell is not null and alive we add 1 cell
+          nb++;
       }
     }
-    
     return nb;
   }
-  
+
+  //Return a tab containing all the neighbors of the cell in parameter
   Cell[] getNeighbors (Cell c) {
-    
-    boolean onTopLine = c.index < nbCellLargeur;
-    boolean onLeftLine = c.index % nbCellLargeur == 0;
-    boolean onRightLine = c.index % nbCellLargeur == nbCellLargeur - 1;
-    boolean onBottomLine = c.index >= (nbCellHauteur-1) * nbCellLargeur;
-    
-    if (!onTopLine && !onLeftLine && !onRightLine && !onBottomLine) { // In the middle
-      return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; // return 8 cell around
+
+    boolean onTopLine = c.index < nbCellLargeur; // True if the cell is on the line at the top of the grid
+    boolean onLeftLine = c.index % nbCellLargeur == 0; // True if the cell is on the line at the left of the grid
+    boolean onRightLine = c.index % nbCellLargeur == nbCellLargeur - 1; // True if the cell is on the line at the right of the grid
+    boolean onBottomLine = c.index >= (nbCellHauteur-1) * nbCellLargeur; // True if the cell is on the line at the bottom of the grid
+
+    if (!onTopLine && !onLeftLine && !onRightLine && !onBottomLine) { // the cell is n the middle
+      return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; //We return all cell around
     }
-    
-    if (onTopLine && !onLeftLine && !onRightLine) { // Not in a corner in the top line
-      return new Cell[]{null, null, null, allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; // return 5 cell (craft boat)
+
+    if (onTopLine && !onLeftLine && !onRightLine) { // if the cell is not in a corner and on the top line
+      return new Cell[]{null, null, null, allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; //We return everything except the 3 top neighbors
     }
-    
-    if (onBottomLine && !onLeftLine && !onRightLine) { // Not in a corner in the bottom line
-       return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], null, null, null, allCell[c.index-1]};// return 5 cell (craft helmet)
+
+    if (onBottomLine && !onLeftLine && !onRightLine) { // if the cell is not in a corner and on the bottom line
+      return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], null, null, null, allCell[c.index-1]}; //We return everything except the 3 bottom neighbors
     }
-    
-    if (onLeftLine && !onTopLine && !onBottomLine) { // Not in a corner in the left line
-      return new Cell[]{null, allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], null, null}; // return 5 cell (without left line)
+
+    if (onLeftLine && !onTopLine && !onBottomLine) { // if the cell is not in a corner and on the left line
+      return new Cell[]{null, allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], null, null}; //We return everything except the 3 left neighbors
     }
-    
-    if (onRightLine && !onTopLine && !onBottomLine) { // Not in a corner in the right line
-      return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], null, null, null, allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; // return 5 cell (C without right line)
+
+    if (onRightLine && !onTopLine && !onBottomLine) { // if the cell is not in a corner and on the right line
+      return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], null, null, null, allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; //We return everything except the 3 right neighbors
     }
-    
+
     if (onRightLine && onTopLine) { // Top right corner
-      return new Cell[]{null, null, null, null, null, allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; // return 3 cell bottom left
+      return new Cell[]{null, null, null, null, null, allCell[c.index+nbCellLargeur], allCell[c.index+nbCellLargeur-1], allCell[c.index-1]}; //We return the 3 bottom left neighbors
     }
-    
+
     if (onLeftLine && onTopLine) { // Top left corner
-      return new Cell[]{null, null, null, allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], null, null}; // return 3 cell bottom right
+      return new Cell[]{null, null, null, allCell[c.index+1], allCell[c.index+nbCellLargeur+1], allCell[c.index+nbCellLargeur], null, null}; //We return the 3 bottom right neighbors
     }
-    
+
     if (onRightLine && onBottomLine) { // bottom right corner
-      return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], null, null, null, null, null, allCell[c.index-1]}; // return 3 cell top left
+      return new Cell[]{allCell[c.index-nbCellLargeur-1], allCell[c.index-nbCellLargeur], null, null, null, null, null, allCell[c.index-1]}; //We return the 3 top left neighbors
     }
-    
-    // return 3 cell top right
-    return new Cell[]{null, allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], null, null, null, null}; // Bottom left corner
-    
-    
+
+    //bottom left corner
+    return new Cell[]{null, allCell[c.index-nbCellLargeur], allCell[c.index-nbCellLargeur+1], allCell[c.index+1], null, null, null, null}; //We return the 3 top right neighbors
   }
-  
+
   void click() {
-    float size = width / this.nbCellLargeur;
-    int caseX = (int)((mouseX - (mouseX % size)) / size);
+    //Calculation of the cell clicked on
+    int caseX = (int)((mouseX - (mouseX % sizeXCell)) / sizeXCell);
+    int caseY = (int)((mouseY - (mouseY % sizeYCell)) / sizeYCell);
     
-    
-    
-    size = height / this.nbCellHauteur;
-    int caseY = (int)((mouseY - (mouseY % size)) / size);
-    
-    if (allCell[this.nbCellLargeur * caseY + caseX].alive) {
-      allCell[this.nbCellLargeur * caseY + caseX].alive = false;
+    int index = this.nbCellLargeur * caseY + caseX;
+
+    if (allCell[index].alive) { // If the cell clicked on is alive
+      //She become dead
+      allCell[index].alive = false;
+      
+      //We remove the cell from the tab of the cell alive
       Cell[] temp = new Cell[cellAlive.length - 1];
       int offset = 0;
       for (int i = 0; i < cellAlive.length; i++) {
-        if (cellAlive[i] != allCell[this.nbCellLargeur * caseY + caseX]) {
+        if (cellAlive[i] != allCell[index]) {
           temp[i+offset] = cellAlive[i];
         } else {
           offset = -1;
         }
       }
       this.cellAlive = temp;
-    } else {
-      allCell[this.nbCellLargeur * caseY + caseX].alive = true;
-      cellAlive = (Cell[]) append(cellAlive, allCell[this.nbCellLargeur * caseY + caseX]);
+      
+    } else { // If the cell clicked on is dead
+    
+      //She become alive and we add it to the tab of alive cell
+      allCell[index].alive = true;
+      cellAlive = (Cell[]) append(cellAlive, allCell[index]);
     }
-    display();
   }
   
+  /*
+  Display the game
+  */
   void display() {
     background(255);
     stroke(0);
     strokeWeight(10);
-    float size = width / this.nbCellLargeur;
+    //Display the lines
     for (int i = 1; i < this.nbCellLargeur; i++) {
-      line(size * i, 0, size * i, height);
+      line(sizeXCell * i, 0, sizeXCell * i, height);
     }
-    
-    size = height / this.nbCellHauteur;
+
     for (int i = 1; i < this.nbCellHauteur; i++) {
-      line(0, size * i, width, size * i);
+      line(0, sizeYCell * i, width, sizeYCell * i);
     }
-    
+
+    //display the cell alive
     for (Cell c : cellAlive) {
       c.display();
     }
