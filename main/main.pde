@@ -16,6 +16,8 @@ Game game;
 Application app;
 
 Button b;
+
+int currentFrame = 0;
   
 void setup() {
   size(900, 900);
@@ -30,6 +32,8 @@ void setup() {
   PFont myFont = createFont(PFont.list()[158], 32);
   
   textFont(myFont);
+  
+  frameRate(60);
 
 }
 
@@ -40,6 +44,13 @@ void draw() {
   } else {
     background(255);
     game.display();
+    if (game.running) {
+      game.run(currentFrame);
+      currentFrame++;
+      if (currentFrame == 60) {
+        currentFrame = 0;
+      } 
+    }
   }
   
   app.display();
@@ -54,8 +65,8 @@ void draw() {
 
 void mousePressed() {
   app.click();
-  if (app.currentMenu == app.app[1]) {
-    if (app.release() == -1) { // If the click is not on a button
+  if (game.running == false && app.currentMenu == app.app[1]) {
+    if (app.release() == -1 && !(app.app[1].cursors[0].selectorClicked())) { // If the click is not on a button
       game.click();
     } else if (app.release() == 1) { // Button Next step
       game.nextStep();
@@ -85,6 +96,7 @@ void mouseReleased() {
   } else if (app.currentMenu == app.app[2]) { // Manage buttons of Settings
     if (app.release() == 0) { // Button back
       app.changeMenu(0);
+      game.setColor(new Color(app.app[2].cursors[2].value, app.app[2].cursors[3].value, app.app[2].cursors[4].value));
       game = new Game(app.app[2].cursors[0].value, app.app[2].cursors[1].value, new Color(app.app[2].cursors[2].value, app.app[2].cursors[3].value, app.app[2].cursors[4].value));
     }
   } else if (app.currentMenu == app.app[3]) { // Manage buttons of Credit
@@ -94,6 +106,12 @@ void mouseReleased() {
   } else if (app.currentMenu == app.app[1]) { // Manage buttons of simulation
     if (app.release() == 0) { // Button back
       app.changeMenu(0);
+    } else if (app.release() == 2 && game.running == false) { // Button Run
+      game.running = true;
+      app.app[1].buttons[2].text = "Stop";
+    } else if (app.release() == 2 && game.running == true) { // button Stop
+      game.running = false;
+      app.app[1].buttons[2].text = "Run";
     }
   }
 }
@@ -134,6 +152,7 @@ Menu initMenuHome() {
 Menu initMenuSimulation() {
   Button b;
   Text t;
+  Cursor c;
   Menu simulation = new Menu();
   
   b = new Button (105, height-50, 150, 50, lightBlue, "Back");
@@ -141,6 +160,15 @@ Menu initMenuSimulation() {
   
   b = new Button (width/2, height-50, 250, 50, lightBlue, "Next step");
   simulation.addButton(b);
+  
+  b = new Button (width/2 + 350, height-50, 150, 50, lightBlue, "Run");
+  simulation.addButton(b);
+  
+  t = new Text("Step/s", width/2 - 285, 55, 30, black);
+  simulation.addText(t);
+  
+  c = new Cursor(width/2, 50, 400, 1, 30);
+  simulation.addCursor(c);
   
   return simulation;
 }

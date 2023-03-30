@@ -4,6 +4,9 @@ class Game {
   int nbCellLargeur;
   int nbCellHauteur;
   
+  int speed;
+  int previousFrame;
+  
   boolean running;
   
   Game (int nbCellLargeur, int nbCellHauteur, Color col) {
@@ -12,6 +15,8 @@ class Game {
     allCell = new Cell[0];
     cellAlive = new Cell[0];
     this.running = false;
+    this.previousFrame = 0;
+    this.speed = 59;
     float sizeX = width / this.nbCellLargeur;
         float sizeY = width / this.nbCellLargeur;
         
@@ -20,6 +25,22 @@ class Game {
       for (int j = 0; j < nbCellLargeur; j++) {
         allCell = (Cell[]) append(allCell, new Cell(j * sizeX, i*sizeY, sizeX, sizeY, col, i*nbCellLargeur+j));
       }
+    }
+  }
+  
+  void run (int currentFrame) {
+    if (currentFrame < previousFrame) {
+      if (currentFrame + 60 - previousFrame == speed) {
+        this.nextStep();
+      }
+    } else if (currentFrame - previousFrame == speed) {
+      this.nextStep();
+    }
+  }
+  
+  void setColor (Color col) {
+    for (Cell c : this.allCell) {
+      c.col = col;
     }
   }
   
@@ -48,14 +69,6 @@ class Game {
       }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
     for (Cell c : cellAlive) {
       allCell[c.index].alive = false;
     }
@@ -65,10 +78,6 @@ class Game {
     for (Cell c : cellAlive) {
       allCell[c.index].alive = true;
     }
-    
-    println("---------------------------");
-    printArray(cellAlive);
-    
   }
   
   boolean contain(Cell [] cells, Cell c) {
@@ -149,7 +158,6 @@ class Game {
     int caseY = (int)((mouseY - (mouseY % size)) / size);
     
     if (allCell[this.nbCellLargeur * caseY + caseX].alive) {
-      println(this.nbCellLargeur * caseY + caseX);
       allCell[this.nbCellLargeur * caseY + caseX].alive = false;
       Cell[] temp = new Cell[cellAlive.length - 1];
       int offset = 0;
