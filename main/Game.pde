@@ -65,7 +65,9 @@ class Game {
   void incrementZomm () {
     if (this.zoom < 80) {
       if ((width < this.nbCellLargeur * (this.allCell[0].largeur)) && (height < this.nbCellHauteur * (this.allCell[0].longeur))) {
-        this.zoom+=2;
+        if (height-this.offsetY < this.nbCellHauteur * (this.allCell[0].longeur+2) && width-game.offsetX < game.nbCellLargeur * (game.allCell[0].largeur+2)) {
+          this.zoom+=2;
+        }
       }
     }
   }
@@ -235,27 +237,28 @@ class Game {
     int caseY = (int)((((mouseY - offsetY) - ((mouseY - offsetY) % this.allCell[0].longeur))) / this.allCell[0].longeur);
 
     int index = this.nbCellLargeur * caseY + caseX;
+    if (index < allCell.length) {
+      if (allCell[index].alive) { // If the cell clicked on is alive
+        //She become dead
+        allCell[index].alive = false;
 
-    if (allCell[index].alive) { // If the cell clicked on is alive
-      //She become dead
-      allCell[index].alive = false;
-
-      //We remove the cell from the tab of the cell alive
-      Cell[] temp = new Cell[cellAlive.length - 1];
-      int offset = 0;
-      for (int i = 0; i < cellAlive.length; i++) {
-        if (cellAlive[i] != allCell[index]) {
-          temp[i+offset] = cellAlive[i];
-        } else {
-          offset = -1;
+        //We remove the cell from the tab of the cell alive
+        Cell[] temp = new Cell[cellAlive.length - 1];
+        int offset = 0;
+        for (int i = 0; i < cellAlive.length; i++) {
+          if (cellAlive[i] != allCell[index]) {
+            temp[i+offset] = cellAlive[i];
+          } else {
+            offset = -1;
+          }
         }
-      }
-      this.cellAlive = temp;
-    } else { // If the cell clicked on is dead
+        this.cellAlive = temp;
+      } else { // If the cell clicked on is dead
 
-      //She become alive and we add it to the tab of alive cell
-      allCell[index].alive = true;
-      cellAlive = (Cell[]) append(cellAlive, allCell[index]);
+        //She become alive and we add it to the tab of alive cell
+        allCell[index].alive = true;
+        cellAlive = (Cell[]) append(cellAlive, allCell[index]);
+      }
     }
   }
 
