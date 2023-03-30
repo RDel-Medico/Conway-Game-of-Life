@@ -73,25 +73,25 @@ void draw() {
 void manageMovement() {
   
   if (keyPresseds[0]) {
-    if (game.offsetY <= 10) {
+    if (game.offsetY < 0) {
       game.offsetY+=10;
       game.updateCellPosition(); 
     }
   }
   if (keyPresseds[1]) {
-    if (height-game.offsetY <= game.nbCellHauteur * game.allCell[0].longeur) {
+    if (height-game.offsetY < game.nbCellHauteur * game.allCell[0].longeur) {
       game.offsetY-=10;
       game.updateCellPosition();
     }
   }
   if (keyPresseds[2]) {
-    if (game.offsetX <= 10) {
+    if (game.offsetX < 0) {
       game.offsetX+=10;
       game.updateCellPosition();
     }
   }
   if (keyPresseds[3]) {
-    if (width-game.offsetX <= game.nbCellLargeur * game.allCell[0].largeur) {
+    if (width-game.offsetX < game.nbCellLargeur * game.allCell[0].largeur) {
       game.offsetX-=10;
       game.updateCellPosition();
     }

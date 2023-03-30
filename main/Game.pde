@@ -64,7 +64,9 @@ class Game {
    */
   void incrementZomm () {
     if (this.zoom < 80) {
-      this.zoom+=2;
+      if ((width < this.nbCellLargeur * (this.allCell[0].largeur)) && (height < this.nbCellHauteur * (this.allCell[0].longeur))) {
+        this.zoom+=2;
+      }
     }
   }
 
@@ -261,9 +263,10 @@ class Game {
   Display the game
    */
   void display() {
-    background(255);
     stroke(0);
     strokeWeight(this.lineSize);
+    fill(255);
+    rect (offsetX, offsetY, this.nbCellLargeur * this.allCell[0].largeur, this.nbCellHauteur * this.allCell[0].longeur);
     //Display the lines
     for (int i = 1; i < this.nbCellLargeur; i++) {
       line(this.allCell[0].largeur * i + offsetX, 0, this.allCell[0].largeur * i + offsetX, height);
