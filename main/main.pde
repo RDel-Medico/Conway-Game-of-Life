@@ -15,6 +15,8 @@ Application app;
 //The current frame of the simulation
 int currentFrame = 0;
 
+boolean keyPresseds[] = new boolean[]{false, false, false, false};
+
 void setup() {
   size(900, 900);
 
@@ -62,8 +64,39 @@ void draw() {
     fill(app.currentMenu.cursors[2].value, app.currentMenu.cursors[3].value, app.currentMenu.cursors[4].value);
     rect(30, 480, 160, 250);
   }
+
+  if (app.currentMenu == app.app[1]) {
+    manageMovement();
+  }
 }
 
+void manageMovement() {
+  
+  if (keyPresseds[0]) {
+    if (game.offsetY <= 10) {
+      game.offsetY+=10;
+      game.updateCellPosition(); 
+    }
+  }
+  if (keyPresseds[1]) {
+    if (height-game.offsetY <= game.nbCellHauteur * game.allCell[0].longeur) {
+      game.offsetY-=10;
+      game.updateCellPosition();
+    }
+  }
+  if (keyPresseds[2]) {
+    if (game.offsetX <= 10) {
+      game.offsetX+=10;
+      game.updateCellPosition();
+    }
+  }
+  if (keyPresseds[3]) {
+    if (width-game.offsetX <= game.nbCellLargeur * game.allCell[0].largeur) {
+      game.offsetX-=10;
+      game.updateCellPosition();
+    }
+  }
+}
 void mouseWheel(MouseEvent event) {
   if (app.currentMenu == app.app[1]) {
     if (event.getCount() == -1) { // scroll out
@@ -72,6 +105,40 @@ void mouseWheel(MouseEvent event) {
       game.incrementZomm();
     }
     game.updateZoom();
+  }
+}
+
+void keyPressed() {
+  if (app.currentMenu == app.app[1]) {
+    if (keyCode == 'Z') {
+      keyPresseds[0] = true;
+    }
+    if (keyCode == 'S') {
+      keyPresseds[1] = true;
+    }
+    if (keyCode == 'Q') {
+      keyPresseds[2] = true;
+    }
+    if (keyCode == 'D') {
+      keyPresseds[3] = true;
+    }
+  }
+}
+
+void keyReleased() {
+  if (app.currentMenu == app.app[1]) {
+    if (keyCode == 'Z') {
+      keyPresseds[0] = false;
+    }
+    if (keyCode == 'S') {
+      keyPresseds[1] = false;
+    }
+    if (keyCode == 'Q') {
+      keyPresseds[2] = false;
+    }
+    if (keyCode == 'D') {
+      keyPresseds[3] = false;
+    }
   }
 }
 

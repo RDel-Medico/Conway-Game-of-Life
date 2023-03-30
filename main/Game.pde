@@ -9,7 +9,9 @@ class Game {
   int nbCellLargeur;
   int nbCellHauteur;
   int zoom;
-  int offset;
+  int offsetX;
+  int offsetY;
+  int lineSize;
 
   //Parameters related to the auto simulation
   int speed; // speed is equals to the number of frame it take to do a step (max 59 is the slowest, min 1 is the fastest)
@@ -21,7 +23,9 @@ class Game {
     this.nbCellLargeur = nbCellLargeur;
     this.nbCellHauteur = nbCellHauteur;
     this.zoom = 0;
-    this.offset = 50;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.lineSize = 10;
 
     //initialisation of parameters related to the auto simulation
     this.speed = 59;
@@ -35,7 +39,7 @@ class Game {
     //initialisation of all cell (dead by default)
     for (int i = 0; i < nbCellHauteur; i++) {
       for (int j = 0; j < nbCellLargeur; j++) {
-        allCell = (Cell[]) append(allCell, new Cell(j * 90 + offset, i*90, 90, 90, col, i*nbCellLargeur+j));
+        allCell = (Cell[]) append(allCell, new Cell(j * 90 + offsetX, i*90 + offsetY, 90, 90, col, i*nbCellLargeur+j));
       }
     }
   }
@@ -54,34 +58,45 @@ class Game {
       this.nextStep();
     }
   }
-  
+
   /*
   Increment the zoom
-  */
+   */
   void incrementZomm () {
-    if (this.zoom < 50) {
+    if (this.zoom < 80) {
       this.zoom+=2;
     }
   }
-  
+
   /*
   Decrement the zoom
-  */
+   */
   void decrementZomm () {
     if (this.zoom > 0) {
       this.zoom-=2;
     }
   }
-  
+
   void updateZoom() {
+    if (this.zoom > 60) {
+      this.lineSize = 2;
+    } else if (this.zoom > 30) {
+      this.lineSize = 5;
+    } else {
+      this.lineSize = 10;
+    }
+    updateCellPosition();
+  }
+
+  void updateCellPosition() {
     for (int i = 0; i < nbCellHauteur; i++) {
-        for (int j = 0; j < nbCellLargeur; j++) {
-          allCell[i*nbCellLargeur+j].posX = j * (90-zoom) + offset;
-          allCell[i*nbCellLargeur+j].posY = i * (90-zoom);
-          allCell[i*nbCellLargeur+j].largeur = 90 - zoom;
-          allCell[i*nbCellLargeur+j].longeur = 90 - zoom;
-        }
+      for (int j = 0; j < nbCellLargeur; j++) {
+        allCell[i*nbCellLargeur+j].posX = j * (90-zoom) + offsetX;
+        allCell[i*nbCellLargeur+j].posY = i * (90-zoom) + offsetY;
+        allCell[i*nbCellLargeur+j].largeur = 90 - zoom;
+        allCell[i*nbCellLargeur+j].longeur = 90 - zoom;
       }
+    }
   }
 
   /*
@@ -95,16 +110,16 @@ class Game {
 
   /*
   Update all the cell alive and dead based on the two rule
-  
-  Rule 1 : a living cell surounded by exactly 2 or 3 cell alive stay alive otherwise it dies
-  
-  Rule 2 : a dead cell become alive if she is surrounded by exactly 3 living cell
-  */
+   
+   Rule 1 : a living cell surounded by exactly 2 or 3 cell alive stay alive otherwise it dies
+   
+   Rule 2 : a dead cell become alive if she is surrounded by exactly 3 living cell
+   */
   void nextStep() {
     Cell[] newCellAlive = new Cell[0]; //The new tab containing all cell alive
 
     Cell []neighbors = new Cell[8]; // Contain the neighbors of a cell
-    
+
     for (Cell c : cellAlive) { // We check all the living cell
       neighbors = this.getNeighbors(c);
       int nbNeighborsAlive = nbAlive(neighbors);
@@ -145,7 +160,7 @@ class Game {
 
   /*
   Return true if the tab in parameters contain the cell c
-  */
+   */
   boolean contain(Cell [] cells, Cell c) {
     for (Cell cell : cells) {
       if (c == cell) {
@@ -157,12 +172,12 @@ class Game {
 
   /*
   return the number of cell alive in the tab in parameter
-  */
+   */
   int nbAlive(Cell[] cell) {
     int nb = 0;
     for (Cell c : cell) {
       if (c != null && c.alive) { // If the cell is not null and alive we add 1 cell
-          nb++;
+        nb++;
       }
     }
     return nb;
@@ -214,15 +229,15 @@ class Game {
 
   void click() {
     //Calculation of the cell clicked on
-    int caseX = (int)(((mouseX - offset) - ((mouseX - offset) % this.allCell[0].largeur)) / this.allCell[0].largeur);
-    int caseY = (int)(((mouseY - (mouseY % this.allCell[0].longeur))) / this.allCell[0].longeur);
-    
+    int caseX = (int)(((mouseX - offsetX) - ((mouseX - offsetX) % this.allCell[0].largeur)) / this.allCell[0].largeur);
+    int caseY = (int)((((mouseY - offsetY) - ((mouseY - offsetY) % this.allCell[0].longeur))) / this.allCell[0].longeur);
+
     int index = this.nbCellLargeur * caseY + caseX;
 
     if (allCell[index].alive) { // If the cell clicked on is alive
       //She become dead
       allCell[index].alive = false;
-      
+
       //We remove the cell from the tab of the cell alive
       Cell[] temp = new Cell[cellAlive.length - 1];
       int offset = 0;
@@ -234,29 +249,28 @@ class Game {
         }
       }
       this.cellAlive = temp;
-      
     } else { // If the cell clicked on is dead
-    
+
       //She become alive and we add it to the tab of alive cell
       allCell[index].alive = true;
       cellAlive = (Cell[]) append(cellAlive, allCell[index]);
     }
   }
-  
+
   /*
   Display the game
-  */
+   */
   void display() {
     background(255);
     stroke(0);
-    strokeWeight(10);
+    strokeWeight(this.lineSize);
     //Display the lines
     for (int i = 1; i < this.nbCellLargeur; i++) {
-      line(this.allCell[0].largeur * i + offset, 0, this.allCell[0].largeur * i + offset, height);
+      line(this.allCell[0].largeur * i + offsetX, 0, this.allCell[0].largeur * i + offsetX, height);
     }
 
     for (int i = 1; i < this.nbCellHauteur; i++) {
-      line(0, this.allCell[0].longeur * i, width, this.allCell[0].longeur * i);
+      line(0, this.allCell[0].longeur * i + offsetY, width, this.allCell[0].longeur * i + offsetY);
     }
 
     //display the cell alive
