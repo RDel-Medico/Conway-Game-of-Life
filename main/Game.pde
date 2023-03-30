@@ -10,6 +10,9 @@ class Game {
   int nbCellHauteur;
   float sizeXCell;
   float sizeYCell;
+  float originalSizeX;
+  float originalSizeY;
+  int zoom;
 
   //Parameters related to the auto simulation
   int speed; // speed is equals to the number of frame it take to do a step (max 59 is the slowest, min 1 is the fastest)
@@ -20,6 +23,7 @@ class Game {
     //initialisation of dimension of the game
     this.nbCellLargeur = nbCellLargeur;
     this.nbCellHauteur = nbCellHauteur;
+    this.zoom = 0;
 
     //initialisation of parameters related to the auto simulation
     this.speed = 59;
@@ -54,6 +58,29 @@ class Game {
       previousFrame = currentFrame;
       this.nextStep();
     }
+  }
+  
+  /*
+  Increment the zoom
+  */
+  void incrementZomm () {
+    if (this.zoom < 20) {
+      this.zoom++; 
+    }
+  }
+  
+  /*
+  Decrement the zoom
+  */
+  void decrementZomm () {
+    if (this.zoom > 0) {
+      this.zoom--; 
+    }
+  }
+  
+  void updateZoom() {
+    this.sizeXCell = 30 - zoom;
+    this.sizeYCell = 30 - zoom;
   }
 
   /*
