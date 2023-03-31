@@ -317,10 +317,10 @@ Function to create the menu simulation
   simulation.addText(t);
   
   //Indication
-  t = new Text("You can move around with Z, Q, S, D", width/2, 100, 20, green);
+  t = new Text("You can move around with Z, Q, S, D", width/2, 100, 30, green);
   simulation.addText(t);
   
-  t = new Text("You can scroll out or in to zoom", width/2, 130, 20, green);
+  t = new Text("You can scroll out or in to zoom", width/2, 130, 30, green);
   simulation.addText(t);
 
   return simulation;
@@ -348,14 +348,14 @@ Function to create the menu settings
   t = new Text("Width of the map", width/2 - 300, 265, 30, black);
   option.addText(t);
 
-  c = new Cursor(width/2 + 50, 260, 400, 10, 1000);
+  c = new Cursor(width/2 + 50, 260, 400, 10, 200);
   option.addCursor(c);
 
   //Text + cursor for height
   t = new Text("Height of the map", width/2 - 300, 360, 30, black);
   option.addText(t);
 
-  c = new Cursor(width/2 + 50, 355, 400, 10, 1000);
+  c = new Cursor(width/2 + 50, 355, 400, 10, 200);
   option.addCursor(c);
   //-----------------------------------------------------------------------------
 
