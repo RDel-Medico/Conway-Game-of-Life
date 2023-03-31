@@ -19,17 +19,17 @@ You can also use this website to install only 1 directory of this repository : h
 Then you can choose according to your OS and in capacity of your pc the version you want:
 
 * For Linux :
-Choose one of the two file that begin with linux (./)
+Choose one of the two file that begin with linux (./Conway-Game-of-Life/linux-amd64)
 * For Windows :
-Choose one of the two file that begin with windows (./)
+Choose one of the two file that begin with windows (./Conway-Game-of-Life/windows-amd64)
 
 ### Executing program
 
 * To run the program on Linux :
-In a terminal go under the version you choosed to run and execute the main (under ./ execute ./main)
+In a terminal go under the version you choosed to run and execute the main (under ./Conway-Game-of-Life/linux-amd64 execute ./main)
 ---
 * To run the program on Windows :
-Go under the version you choosed to run and execute the main.exe (.//main.exe)
+Go under the version you choosed to run and execute the main.exe (./Conway-Game-of-Life/windows-amd64/main.exe)
 
 ## Authors
 
