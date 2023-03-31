@@ -8,10 +8,15 @@ class Game {
   //dimension of the game
   int nbCellLargeur;
   int nbCellHauteur;
-  int zoom;
+
+
+  int zoom; //The value of the zoom on the game
+
+  // The offset to move the camera around
   int offsetX;
   int offsetY;
-  int lineSize;
+
+  int lineSize; // Size of the line between each cell
 
   //Parameters related to the auto simulation
   int speed; // speed is equals to the number of frame it take to do a step (max 59 is the slowest, min 1 is the fastest)
@@ -42,6 +47,16 @@ class Game {
         allCell = (Cell[]) append(allCell, new Cell(j * 90 + offsetX, i*90 + offsetY, 90, 90, col, i*nbCellLargeur+j));
       }
     }
+
+    // Center the camera
+    centerTheGame();
+    updateCellPosition();
+  }
+
+  //Center the camera based on the size of the grid
+  void centerTheGame() {
+    this.offsetX = -(int)((this.nbCellLargeur * this.allCell[0].largeur) / 2 - width/2);
+    this.offsetY = -(int)((this.nbCellHauteur * this.allCell[0].longeur) / 2 - height/2);
   }
 
   /*
@@ -63,11 +78,13 @@ class Game {
   Increment the zoom
    */
   void incrementZomm () {
-    if (this.zoom < 80) {
-      if ((width < this.nbCellLargeur * (this.allCell[0].largeur)) && (height < this.nbCellHauteur * (this.allCell[0].longeur))) {
-        if (height-this.offsetY < this.nbCellHauteur * (this.allCell[0].longeur+2) && width-game.offsetX < game.nbCellLargeur * (game.allCell[0].largeur+2)) {
-          this.zoom+=2;
-        }
+    if (this.zoom < 80) { // If the zoom is not already at it's maximum
+      if (this.offsetY <= -nbCellHauteur && this.offsetX <= -nbCellLargeur && (height-this.offsetY < this.nbCellHauteur * (this.allCell[0].longeur-2)) && (width-game.offsetX < game.nbCellLargeur * (game.allCell[0].largeur-2))) { // If the zoom is not gonna show out of the grid
+        this.zoom+=2;
+        
+        //We keep the center at the center after the zoom
+        this.offsetX += this.nbCellLargeur;
+        this.offsetY += this.nbCellHauteur;
       }
     }
   }
@@ -78,9 +95,16 @@ class Game {
   void decrementZomm () {
     if (this.zoom > 0) {
       this.zoom-=2;
+      
+      //We keep the center at the center after the zoom
+      this.offsetX -= this.nbCellLargeur;
+      this.offsetY -= this.nbCellHauteur;
     }
   }
 
+  /*
+Update the line size between the cell based on how much the game is zoomed and update all the cell with the current zoom
+   */
   void updateZoom() {
     if (this.zoom > 60) {
       this.lineSize = 2;
@@ -92,6 +116,9 @@ class Game {
     updateCellPosition();
   }
 
+  /*
+Update all the cell position, when there is a new offset or a new zoom
+   */
   void updateCellPosition() {
     for (int i = 0; i < nbCellHauteur; i++) {
       for (int j = 0; j < nbCellLargeur; j++) {

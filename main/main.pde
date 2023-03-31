@@ -1,6 +1,7 @@
 //Color used for the app
 final Color black = new Color (0);
 final Color lightBlue = new Color(162, 240, 235);
+final Color green = new Color(62, 170, 5);
 
 Game game; // The instance of the game
 
@@ -15,6 +16,12 @@ Application app;
 //The current frame of the simulation
 int currentFrame = 0;
 
+/*
+keyPreesseds[0] = true if Z is pressed
+keyPreesseds[1] = true if S is pressed
+keyPreesseds[2] = true if Q is pressed
+keyPreesseds[3] = true if D is pressed
+*/
 boolean keyPresseds[] = new boolean[]{false, false, false, false};
 
 void setup() {
@@ -65,32 +72,32 @@ void draw() {
     rect(30, 480, 160, 250);
   }
 
-  if (app.currentMenu == app.app[1]) {
+  if (app.currentMenu == app.app[1]) { // If we are in the simulation we manage the movement
     manageMovement();
   }
 }
 
-void manageMovement() {
+void manageMovement() { // Manage all the movement on the grid
   
-  if (keyPresseds[0]) {
+  if (keyPresseds[0]) { // Going to the top
     if (game.offsetY < 0) {
       game.offsetY+=10;
       game.updateCellPosition(); 
     }
   }
-  if (keyPresseds[1]) {
+  if (keyPresseds[1]) { // Going to the bottom
     if (height-game.offsetY < game.nbCellHauteur * game.allCell[0].longeur) {
       game.offsetY-=10;
       game.updateCellPosition();
     }
   }
-  if (keyPresseds[2]) {
+  if (keyPresseds[2]) { // Going to the left
     if (game.offsetX < 0) {
       game.offsetX+=10;
       game.updateCellPosition();
     }
   }
-  if (keyPresseds[3]) {
+  if (keyPresseds[3]) { // Going to the right
     if (width-game.offsetX < game.nbCellLargeur * game.allCell[0].largeur) {
       game.offsetX-=10;
       game.updateCellPosition();
@@ -98,7 +105,7 @@ void manageMovement() {
   }
 }
 void mouseWheel(MouseEvent event) {
-  if (app.currentMenu == app.app[1]) {
+  if (app.currentMenu == app.app[1]) { //scrolling while in the simulation menu
     if (event.getCount() == -1) { // scroll out
       game.decrementZomm();
     } else { //  scroll in
@@ -109,7 +116,7 @@ void mouseWheel(MouseEvent event) {
 }
 
 void keyPressed() {
-  if (app.currentMenu == app.app[1]) {
+  if (app.currentMenu == app.app[1]) { // If on the simulation menu, we update the keyPresseds
     if (keyCode == 'Z') {
       keyPresseds[0] = true;
     }
@@ -126,7 +133,7 @@ void keyPressed() {
 }
 
 void keyReleased() {
-  if (app.currentMenu == app.app[1]) {
+  if (app.currentMenu == app.app[1]) { // If on the simulation menu, we update the keyPresseds
     if (keyCode == 'Z') {
       keyPresseds[0] = false;
     }
@@ -185,6 +192,10 @@ void mouseReleased() {
 
     if (app.release() == 2) { // Button credit
       app.changeMenu(3); // Menu active become credit
+    }
+    
+    if (app.release() == 3) { // Button credit
+      exit(); // Menu active become credit
     }
   } else if (app.currentMenu == app.app[2]) { // Manage buttons of Settings
 
@@ -251,6 +262,10 @@ Menu initMenuHome() {
   //Buton credit
   b = new Button (width/2, 650, 400, 100, lightBlue, "Credit");
   home.addButton(b);
+  
+  //Buton Quit
+  b = new Button (width/2, 800, 400, 100, lightBlue, "Quit");
+  home.addButton(b);
 
   return home;
 }
@@ -282,6 +297,13 @@ Menu initMenuSimulation() {
 
   //Text for the cursors
   t = new Text("Step/s", width/2 - 285, 55, 30, black);
+  simulation.addText(t);
+  
+  //Indication
+  t = new Text("You can move around with Z, Q, S, D", width/2, 100, 20, green);
+  simulation.addText(t);
+  
+  t = new Text("You can scroll out or in to zoom", width/2, 130, 20, green);
   simulation.addText(t);
 
   return simulation;
